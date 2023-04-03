@@ -1,0 +1,15 @@
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/bin/Debug/net7.0/huffman-coding-table
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/bin/Debug/net7.0/huffman-coding-table.deps.json
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/bin/Debug/net7.0/huffman-coding-table.runtimeconfig.json
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/bin/Debug/net7.0/huffman-coding-table.dll
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/bin/Debug/net7.0/huffman-coding-table.pdb
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.csproj.AssemblyReference.cache
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.GeneratedMSBuildEditorConfig.editorconfig
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.AssemblyInfoInputs.cache
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.AssemblyInfo.cs
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.csproj.CoreCompileInputs.cache
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.dll
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/refint/huffman-coding-table.dll
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.pdb
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/huffman-coding-table.genruntimeconfig.cache
+/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/obj/Debug/net7.0/ref/huffman-coding-table.dll
