@@ -8,7 +8,7 @@ class Program
     static void Main(string[] args)
     {
         // Change the file to your directory
-        string filePath = "D:/Навчання/Терм ІІІ/Прикладні алгоритми та структури даних І/huffman-coding-table/huffman-coding-table/sherlock.txt";
+        string filePath = "/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
         Dictionary<char, int> characterFrequency = CountCharacterFrequency(filePath);
         
         foreach (KeyValuePair<char, int> entry in characterFrequency)
@@ -30,10 +30,10 @@ class Program
 
     public class Node
     {
-        private char? Character;
-        private int Frequency;
-        private Node rightChild;
-        private Node leftChild; 
+        public char? Character;
+        public int Frequency;
+        public Node rightChild;
+        public Node leftChild; 
         
         
         public Node(char? Character, int Frequency)
@@ -74,28 +74,36 @@ class Program
         
     }
     
-    Node HuffmanTree(int[] characterFrequency)
+    static Node HuffmanTree(Dictionary<char, int> characterFrequency)
     {
-        var PriorityQueue = new PriorityQueue<Node>();
-        for (int i = 0; i < 1000; i++)
+        var priorityQueue = new PriorityQueue<Node, int>();
+        
+        /*for (int i = 0; i < 1000; i++)
         {
             if (characterFrequency[i] > 1)
             {
-                PriorityQueue.Enqueue(characterFrequency[i], new Node(characterFrequency[i]));
+                priorityQueue.Enqueue(characterFrequency[i], new Node(characterFrequency[i]));
             }
+        }*/
+        
+        foreach (var entry in characterFrequency)
+        {
+            priorityQueue.Enqueue(new Node(entry.Key, entry.Value), entry.Value);
         }
 
-        while (PriorityQueue.Count > 1)
+        while (priorityQueue.Count > 1)
         {
-            Node rightChild = PriorityQueue.Dequeue(); 
-            Node leftChild = PriorityQueue.Dequeue();
+            Node rightChild = priorityQueue.Dequeue(); 
+            Node leftChild = priorityQueue.Dequeue();
+            
             var currentFrequency = rightChild.Frequency + leftChild.Frequency;
             Node nextNode = new Node(rightChild, leftChild, currentFrequency);
-            PriorityQueue.Enqueue(nextNode, currentFrequency);
             
+            priorityQueue.Enqueue(nextNode, nextNode.Frequency);
+
         }
 
-        return PriorityQueue.Dequeue(Node);
+        return priorityQueue.Dequeue();
 
     }
     
