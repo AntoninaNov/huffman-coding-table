@@ -121,6 +121,46 @@ class Program
         return priorityQueue.Dequeue();
     }
     
+    public class minHeap
+    {
+        public int size;
+        public int[] heap;
+
+        public int Parent(int i)
+        {
+            return (i - 1) / 2;
+        }
+        
+        public int RightChild(int i)
+        {
+            return (2 * i + 2);
+        }
+        public int LeftChild(int i)
+        {
+            return (2 * i + 1);
+        }
+        
+        public void Swap(List<int> heap, int i, int j)
+        {
+            int temp = heap[i];
+            heap[i] = heap[j];
+            heap[j] = temp;
+        }
+
+        public void Insert(List<int> heap, int element)
+        {
+            
+        }
+
+        /*public void GetMin
+        {
+        }
+
+        public void Heapify
+        {}*/
+        
+    }
+    
     static void GenerateEncodingTable(Node node, string path, Dictionary<char, string> encodingTable)
     {
         if (node == null)
