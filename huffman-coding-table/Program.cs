@@ -11,21 +11,36 @@ class Program
         string filePath = "/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
         Dictionary<char, int> characterFrequency = CountCharacterFrequency(filePath);
         
-        foreach (KeyValuePair<char, int> entry in characterFrequency)
+        /*foreach (KeyValuePair<char, int> entry in characterFrequency)
         {
             Console.WriteLine($"Character: {entry.Key}, Count: {entry.Value}");
-        }
+        }*/
         
-        // sort (from min to max) characters by their frequency 
+        /*// sort (from min to max) characters by their frequency 
         Console.WriteLine($"\nSORTED");
         
         foreach (KeyValuePair<char, int> entry in characterFrequency.OrderBy(key => key.Value))
         {
             Console.WriteLine($"Character: {entry.Key}, Count: {entry.Value}");
-        }
+        }*/
 
         Node root = HuffmanTree(characterFrequency);
         
+        var encodingTable = new Dictionary<char, string>();
+        GenerateEncodingTable(root, "", encodingTable);
+        
+        Console.WriteLine("\nHuffman Encoding Table:");
+        Console.WriteLine("---------------------------");
+        Console.WriteLine("| {0,-5} | {1,-15} |", "Char", "Encoding");
+        Console.WriteLine("---------------------------");
+
+        foreach (var entry in encodingTable)
+        {
+            Console.WriteLine("| {0,-5} | {1,-15} |", entry.Key, entry.Value);
+        }
+
+        Console.WriteLine("---------------------------");
+
     }
 
     public class Node
@@ -104,9 +119,23 @@ class Program
         }
 
         return priorityQueue.Dequeue();
-
     }
     
-   
-    
+    static void GenerateEncodingTable(Node node, string path, Dictionary<char, string> encodingTable)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        if (node.Character.HasValue)
+        {
+            encodingTable[node.Character.Value] = path;
+        }
+        else
+        {
+            GenerateEncodingTable(node.leftChild, path + "0", encodingTable);
+            GenerateEncodingTable(node.rightChild, path + "1", encodingTable);
+        }
+    }
 }
