@@ -40,6 +40,9 @@ class Program
         }
 
         Console.WriteLine("---------------------------");
+        
+        string encodedText = EncodeText(filePath, encodingTable);
+        WriteTextEncodedFile("textformat.txt", encodedText);
 
     }
 
@@ -177,5 +180,17 @@ class Program
             GenerateEncodingTable(node.leftChild, path + "0", encodingTable);
             GenerateEncodingTable(node.rightChild, path + "1", encodingTable);
         }
+    }
+    
+    static string EncodeText(string filePath, Dictionary<char, string> encodingTable)
+    {
+        string fileContent = File.ReadAllText(filePath);
+        string encodedText = string.Concat(fileContent.Select(c => encodingTable[c]));
+        return encodedText;
+    }
+
+    static void WriteTextEncodedFile(string outputPath, string encodedText)
+    {
+        File.WriteAllText(outputPath, encodedText);
     }
 }
