@@ -43,7 +43,7 @@ class Program
         
         string encodedText = EncodeText(filePath, encodingTable);
         WriteTextEncodedFile("textformat.txt", encodedText);
-
+        WriteEncodedFile("binaryformat.bin", encodedText);
     }
 
     public class Node
@@ -193,4 +193,36 @@ class Program
     {
         File.WriteAllText(outputPath, encodedText);
     }
+    
+    static void WriteEncodedFile(string outputPath, string encodedText)
+    {
+        using (var stream = new FileStream(outputPath, FileMode.Create))
+        {
+            int buffer = 0; // Буфер для зберігання бітів перед записом у файл
+            int bitsInBuffer = 0; // Кількість бітів, які вже зберігаються в буфері
+            
+            foreach (char bit in encodedText)
+            {
+                // Зсуваємо біти в буфері на 1 позицію вліво і додаємо новий біт
+                buffer = (buffer << 1) | (bit == '1' ? 1 : 0);
+                bitsInBuffer++;
+
+                // Якщо у буфері вже 8 бітів, записуємо байт у файл і скидаємо буфер та лічильник
+                if (bitsInBuffer == 8)
+                {
+                    stream.WriteByte((byte)buffer);
+                    buffer = 0;
+                    bitsInBuffer = 0;
+                }
+            }
+
+            // Якщо у буфері залишилися біти, додаємо їх до файлу, доповнюючи недостаючі біти нулями
+            if (bitsInBuffer > 0)
+            {
+                buffer <<= 8 - bitsInBuffer;
+                stream.WriteByte((byte)buffer);
+            }
+        }
+    }
+
 }
