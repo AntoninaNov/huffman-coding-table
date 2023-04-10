@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Drawing;
 
 
 class Program
@@ -8,9 +9,9 @@ class Program
     static void Main(string[] args)
     {
         // Change the file to your directory
-        string filePath = "/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
+        string filePath = "D:/Навчання/Терм ІІІ/Прикладні алгоритми та структури даних І/huffman-coding-table/huffman-coding-table/sherlock.txt";
+        //"/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
         Dictionary<char, int> characterFrequency = CountCharacterFrequency(filePath);
-        
         /*foreach (KeyValuePair<char, int> entry in characterFrequency)
         {
             Console.WriteLine($"Character: {entry.Key}, Count: {entry.Value}");
@@ -95,6 +96,8 @@ class Program
     static Node HuffmanTree(Dictionary<char, int> characterFrequency)
     {
         var priorityQueue = new PriorityQueue<Node, int>();
+        //var minHeap = new MinHeap();
+        
         
         /*for (int i = 0; i < 1000; i++)
         {
@@ -107,12 +110,15 @@ class Program
         foreach (var entry in characterFrequency)
         {
             priorityQueue.Enqueue(new Node(entry.Key, entry.Value), entry.Value);
+            //minHeap.Insert();
         }
 
         while (priorityQueue.Count > 1)
         {
             Node rightChild = priorityQueue.Dequeue(); 
+            //Node rightChild = minHeap.Delete(minHeap.heap, minHeap.size); 
             Node leftChild = priorityQueue.Dequeue();
+            
             
             var currentFrequency = rightChild.Frequency + leftChild.Frequency;
             Node nextNode = new Node(rightChild, leftChild, currentFrequency);
@@ -124,44 +130,81 @@ class Program
         return priorityQueue.Dequeue();
     }
     
-    public class minHeap
+    public class MinHeap
     {
         public int size;
         public int[] heap;
-
+        
         public int Parent(int i)
         {
             return (i - 1) / 2;
         }
         
-        public int RightChild(int i)
+        public static int RightChild(int i)
         {
             return (2 * i + 2);
         }
-        public int LeftChild(int i)
+        
+        public static int LeftChild(int i)
         {
             return (2 * i + 1);
         }
+
+        public int Insert(int[] heap, int size, int Key)
+        {
+            size++;
+            heap[size - 1] = Key;
+            Heapify(heap, size, size - 1);
+            return size;
+        }
+
+        public int Delete(int[] heap, int size)
+        {
+            int lastElement = heap[size - 1];
+            heap[0] = lastElement;
+            size = size - 1;
+            Heapify(heap, size, 0);
+            return size;
+        }
         
-        public void Swap(List<int> heap, int i, int j)
+        public void GetMin(int[] heap)
+        {
+            for (int n = size / 2 - 1; n >= 0; n--)
+            {
+                Swap(heap, 0, n);
+                Heapify(heap, size, n);
+            }
+        }
+        
+        public static void Swap(int[] heap, int i, int j)
         {
             int temp = heap[i];
             heap[i] = heap[j];
             heap[j] = temp;
         }
-
-        public void Insert(List<int> heap, int element)
-        {
-            
-        }
-
-        /*public void GetMin
-        {
-        }
-
-        public void Heapify
-        {}*/
         
+        static void Heapify(int[] heap, int size, int m)
+        {
+            int smallest = m;
+            int leftchild = LeftChild(m);
+            int rightchild = RightChild(m);
+            
+            // check if the left child is smaller than the current smallest element.
+            if (leftchild < m && heap[leftchild] < heap[smallest])
+                smallest = leftchild;
+
+            // check if the right child is smaller than the current smallest element.
+            if (rightchild < m && heap[rightchild] < heap[smallest])
+                smallest = rightchild;
+
+            // if the largest element is not the current element, swap them and call Heapify recursively.
+            if (smallest != m)
+            {
+                Swap(heap, m, smallest);
+                Heapify(heap, size, smallest);
+            }
+        }
+
     }
     
     static void GenerateEncodingTable(Node node, string path, Dictionary<char, string> encodingTable)
