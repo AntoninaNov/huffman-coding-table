@@ -9,8 +9,8 @@ class Program
     static void Main(string[] args)
     {
         // Change the file to your directory
-        string filePath = "D:/Навчання/Терм ІІІ/Прикладні алгоритми та структури даних І/huffman-coding-table/huffman-coding-table/sherlock.txt";
-        //"/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
+        string filePath = "/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
+        //";
         Dictionary<char, int> characterFrequency = CountCharacterFrequency(filePath);
         /*foreach (KeyValuePair<char, int> entry in characterFrequency)
         {
@@ -130,7 +130,7 @@ class Program
         return priorityQueue.Dequeue();
     }
     
-    public class MinHeap
+    /*public class MinHeap
     {
         public int size;
         public int[] heap;
@@ -206,7 +206,7 @@ class Program
         }
 
     }
-    
+    */
     static void GenerateEncodingTable(Node node, string path, Dictionary<char, string> encodingTable)
     {
         if (node == null)
@@ -247,10 +247,14 @@ class Program
             foreach (char bit in encodedText)
             {
                 // Зсуваємо біти в буфері на 1 позицію вліво і додаємо новий біт
-                buffer = (buffer << 1) | (bit == '1' ? 1 : 0);
+                buffer <<= 1; // 1011 << 1 = 10110 додаємо 0 як молодший біт
+                if (bit == '1')
+                {
+                    buffer |= 1; // замінюємо молодший біт на 1 (bitwise OR)
+                }
                 bitsInBuffer++;
-
-                // Якщо у буфері вже 8 бітів, записуємо байт у файл і скидаємо буфер та лічильник
+                
+                // Якщо в буфері вже 8 бітів = 1 байт, записуємо його
                 if (bitsInBuffer == 8)
                 {
                     stream.WriteByte((byte)buffer);
@@ -259,10 +263,9 @@ class Program
                 }
             }
 
-            // Якщо у буфері залишилися біти, додаємо їх до файлу, доповнюючи недостаючі біти нулями
-            if (bitsInBuffer > 0)
+            // Доповнюємо залишкові біти у буфері нулями
             {
-                buffer <<= 8 - bitsInBuffer;
+                buffer <<= 8 - bitsInBuffer; // Зсув бітів вліво в буфері 
                 stream.WriteByte((byte)buffer);
             }
         }
