@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
-using System.Drawing;
-
+using System.Text;
 
 class Program
 {
     static void Main(string[] args)
     {
         // Change the file to your directory
-        string filePath = "D:/Навчання/Терм ІІІ/Прикладні алгоритми та структури даних І/huffman-coding-table/huffman-coding-table/sherlock.txt";
+        string filePath = "/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
         //"/Users/antoninanovak/RiderProjects/huffman-coding-table/huffman-coding-table/sherlock.txt";
         //"D:/Навчання/Терм ІІІ/Прикладні алгоритми та структури даних І/huffman-coding-table/huffman-coding-table/sherlock.txt";
         Dictionary<char, int> characterFrequency = CountCharacterFrequency(filePath);
@@ -47,6 +47,10 @@ class Program
         string encodedText = EncodeText(filePath, encodingTable);
         WriteTextEncodedFile("textformat.txt", encodedText);
         WriteEncodedFile("binaryformat.bin", encodedText);
+        
+        string decodedText = DecodeBinaryFile("binaryformat.bin", root);
+        WriteDecodedFile("decodedBinary.txt", decodedText);
+
     }
 
     public class Node
@@ -74,82 +78,88 @@ class Program
     public class MinHeap
     {
         public int size;
-        public int[] heap;
+        public Node[] heap;
 
-        //public MinHeap(int size, int[] heap)
-        //{
-            //this.size = size;
-            //this.heap = heap;
-        //}
+        public MinHeap(int capacity)
+        {
+            size = 0;
+            heap = new Node[capacity];
+        }
 
         public int ParentNode(int i)
         {
             return (i - 1) / 2;
         }
-        
-        public static int RightChild(int i)
+
+        public int RightChild(int i)
         {
             return (2 * i + 2);
         }
-        
-        public static int LeftChild(int i)
+
+        public int LeftChild(int i)
         {
             return (2 * i + 1);
         }
 
-        public void Insert(Node node, int Key)
-        { 
+        public void Insert(Node node)
+        {
             size++;
-            heap[size - 1] = Key;
-            Heapify(heap, size, size - 1);
-        }
-
-        public void Delete(int[]heap, int size)
-        {
-            int lastElement = heap[size - 1];
-            heap[0] = lastElement;
-            size = size - 1;
-            Heapify(heap, size, 0);
-        }
-        
-        public void GetMin(int[] heap)
-        {
-            for (int n = size / 2 - 1; n >= 0; n--)
-            {
-                Swap(heap, 0, n);
-                Heapify(heap, size, n);
-            }
-        }
-        
-        public static void Swap(int[] heap, int i, int j)
-        {
-            int temp = heap[i];
-            heap[i] = heap[j];
-            heap[j] = temp;
-        }
-        
-        static void Heapify(int[] heap, int size, int m)
-        {
-            int smallest = m;
-            int leftchildOfNode = LeftChild(m);
-            int rightchildOfNode = RightChild(m);
+            heap[size - 1] = node;
+            int i = size - 1;
             
-            // check if the left child is smaller than the current smallest element.
-            if (leftchildOfNode < m && heap[leftchildOfNode] < heap[smallest])
-                smallest = leftchildOfNode;
-
-            // check if the right child is smaller than the current smallest element.
-            if (rightchildOfNode < m && heap[rightchildOfNode] < heap[smallest])
-                smallest = rightchildOfNode;
-
-            // if the largest element is not the current element, swap them and call Heapify recursively.
-            if (smallest != m)
+            // не юзаємо хіпіфай, а просто переміщуємо вгору
+            while (i > 0 && heap[ParentNode(i)].Frequency > heap[i].Frequency)
             {
-                Swap(heap, m, smallest);
-                Heapify(heap, size, smallest);
+                Swap(i, ParentNode(i));
+                i = ParentNode(i);
             }
         }
 
+        public Node DeleteMin()
+        {
+            // мінімальний заміняємо останнім
+            Node min = heap[0];
+            heap[0] = heap[size - 1];
+            size--;
+
+            // а ось тут юзаємо хіпіфай бо переміщуємо вниз
+            Heapify(0);
+            return min;
+        }
+
+        private void Swap(int i, int j) // Rider запропонував зробити "Swap via deconstruction"
+        {
+            (heap[i], heap[j]) = (heap[j], heap[i]);
+        }
+
+
+        private void Heapify(int i)
+        {
+            int smallest;
+            int leftchildOfNode = LeftChild(i);
+            int rightchildOfNode = RightChild(i);
+            
+            // враховуємо частоту!
+            if (leftchildOfNode < size && heap[leftchildOfNode].Frequency < heap[i].Frequency)
+            {
+                smallest = leftchildOfNode;
+            }
+            else
+            {
+                smallest = i;
+            }
+
+            if (rightchildOfNode < size && heap[rightchildOfNode].Frequency < heap[smallest].Frequency)
+            {
+                smallest = rightchildOfNode;
+            }
+
+            if (smallest != i)
+            {
+                Swap(i, smallest);
+                Heapify(smallest);
+            }
+        }
     }
 
     static Dictionary<char, int> CountCharacterFrequency(string filePath)
@@ -178,34 +188,33 @@ class Program
     
     static Node HuffmanTree(Dictionary<char, int> characterFrequency)
     {
-        var priorityQueue = new PriorityQueue<Node, int>();
-        var Heap = new MinHeap();
+        // var priorityQueue = new PriorityQueue<Node, int>();
+        var Heap = new MinHeap(characterFrequency.Count);
 
         foreach (var entry in characterFrequency)
         {
-            priorityQueue.Enqueue(new Node(entry.Key, entry.Value), entry.Value);
-            Heap.Insert(new Node(entry.Key, entry.Value), entry.Value);
+            // priorityQueue.Enqueue(new Node(entry.Key, entry.Value), entry.Value);
+            Heap.Insert(new Node(entry.Key, entry.Value));
         }
 
         //while (priorityQueue.Count > 1)
         while (Heap.size > 1)
         {
-            Node rightChild = priorityQueue.Dequeue(); 
-            //Node rightChild = Heap.Delete(); 
-            Node leftChild = priorityQueue.Dequeue();
-            //Node leftChild = Heap.Delete(); 
-            
+            //Node rightChild = priorityQueue.Dequeue(); 
+            //Node leftChild = priorityQueue.Dequeue();
+            Node rightChild = Heap.DeleteMin();
+            Node leftChild = Heap.DeleteMin();
             
             var currentFrequency = rightChild.Frequency + leftChild.Frequency;
             Node nextNode = new Node(rightChild, leftChild, currentFrequency);
             
-            priorityQueue.Enqueue(nextNode, nextNode.Frequency);
-            Heap.Insert(nextNode, nextNode.Frequency);
+            // priorityQueue.Enqueue(nextNode, nextNode.Frequency);
+            Heap.Insert(nextNode);
 
         }
 
-        return priorityQueue.Dequeue();
-        //return Heap.Delete();
+        // return priorityQueue.Dequeue();
+        return Heap.DeleteMin();
     }
     
     
@@ -272,5 +281,37 @@ class Program
             }
         }
     }
+    
+    /*static string DecodeBinaryFile(string binaryFilePath, Node huffmanTreeRoot)
+    {
+        StringBuilder decodedText = new StringBuilder();
+        using (var stream = new FileStream(binaryFilePath, FileMode.Open))
+        {
+            int currentByte;
+            Node currentNode = huffmanTreeRoot;
 
+            while ((currentByte = stream.ReadByte()) != -1)
+            {
+                for (int bitPos = 7; bitPos >= 0; bitPos--)
+                {
+                    int currentBit = (currentByte >> bitPos) & 1;
+                    currentNode = currentBit == 0 ? currentNode.leftChild : currentNode.rightChild;
+
+                    if (currentNode.Character.HasValue)
+                    {
+                        decodedText.Append(currentNode.Character.Value);
+                        currentNode = huffmanTreeRoot;
+                    }
+                }
+            }
+        }
+
+        return decodedText.ToString();
+    }
+
+    static void WriteDecodedFile(string outputPath, string decodedText)
+    {
+        File.WriteAllText(outputPath, decodedText);
+    }
+    */
 }
